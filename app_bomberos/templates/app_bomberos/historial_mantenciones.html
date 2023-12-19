@@ -1,0 +1,150 @@
+{% extends "app_bomberos/base.html" %}
+
+{% block title %}Historial de mantenciones{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+           title: 'Exito!',
+           text: '{{msg}}',
+           icon: 'success',
+           confirmButtonText: 'Aceptar',
+           confirmButtonColor: 'Green'
+           }) 
+       </script>
+    {% endfor %}
+</ul>
+{% endif %}    
+{% if user.is_authenticated and not user.is_superuser%}
+    <div class="container-fluid">
+
+
+
+        <div class="row">
+            <div id="panel-cliente" class="col-sm-2">
+                <ul class="nav flex-column">
+                    <li>
+                        <h3 style="border-bottom: 1px solid #acacac;">Tipos de Mantenciones</h3>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "historial_mantenciones" %}">M. Preventivo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "historial_correctiva" %}">M. Correctivo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "historial_externo" %}">M. Externo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "revision" %}">Revisiones Diarias</a>
+                    </li>
+                    {% if user_role == 'comandante' and not user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "estadisticas" %}">Estadísticas</a>
+                    </li>
+                    {% endif %}
+                   
+                </ul>
+            </div>
+
+
+    <div class="col-md-10"> 
+        <h3>Historial de Mantenciones Preventivas</h3>
+        <br>
+            <form method="get" action="{% url 'historial_mantenciones' %}" class="form-inline d-flex justify-content-center">
+                <input type="text" name="q" class="form-control" placeholder="Buscar Mantenciones">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+    <ul>
+        {% for mantenimiento in obtener %}
+        <li>
+            <button type="button" class="btn btn-link " data-toggle="collapse" data-target="#detalleMantencion{{ mantenimiento.id }}">
+                Mantenimiento del {{ mantenimiento.fecha_mant }} Para carro clave: {{ mantenimiento.id_autobombero.clave }} Patente: {{ mantenimiento.id_autobombero.patente }} Compañia: {{ mantenimiento.id_autobombero.compania }}
+                <a role="button" class="btn btn-danger" href="{% url 'generar_pdf' mantenimiento.id %}">
+                    <i class="fas fa-file-pdf"></i></a>
+                <a role="button" class="btn btn-primary" href="{% url "detalle_insumo" mantenimiento.id %}">
+                    <i class="fas fa-solid fa-clipboard-check"></i></a> 
+                <a role="button" class="btn btn-warning" href="{% url "detalle_mantencion" mantenimiento.id %}">
+                    <i class="fas fa-solid fa-dollar-sign"></i></a></button>            
+            <div id="detalleMantencion{{ mantenimiento.id }}" class="collapse">
+                <p><strong>Fecha de mantención:</strong> {{ mantenimiento.fecha_mant }}</p>
+                <p><strong>Kilometraje:</strong> {{ mantenimiento.kilometraje }}</p>
+                <p><strong>Fecha de ingreso:</strong> {{ mantenimiento.fecha_ingreso }}</p>
+                <p><strong>Fecha de salida:</strong> {{ mantenimiento.fecha_entrega }}</p>
+                <p><strong>Tipo de mantención:</strong> {{ mantenimiento.tipo_mantencion }}</p>
+                <p><strong>Sueldo actual mecánico:</strong> {{ mantenimiento.sueldo_a_m }}</p>
+                <p><strong>Proveedor:</strong> {{ mantenimiento.id_prov}}</p>
+                <p><strong>Observaciones:</strong> {{ mantenimiento.observaciones }}</p>
+                <h5 class="collapse-toggle btn btn-outline-danger btn-lg btn-block" data-toggle="collapse" data-target="#seccionTareas{{ mantenimiento.id }}">Tareas</h5>
+                <div id="seccionTareas{{ mantenimiento.id }}" class="collapse">
+                    <ul>
+                        {% for tarea in mantenimiento.tareas_internas.all %}
+                            <li>{{ tarea.descripcion }} - {{ tarea.tipo_tarea }}</li>
+                        {% empty %}
+                            <li>No hay tareas internas registradas.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <h5 class="collapse-toggle btn btn-outline-danger btn-lg btn-block" data-toggle="collapse" data-target="#seccionInsumos{{ mantenimiento.id }}">Insumos</h5>
+                <div id="seccionInsumos{{ mantenimiento.id }}" class="collapse">
+                    <ul>
+                        {% for detalle_insumo in mantenimiento.detalles_insumo.all %}
+                        <li><p><strong>Nombre del insumo: </strong>{{ detalle_insumo.id_insumo }}</p></li>
+                        <li><p><strong>Monto del insumo: </strong>{{ detalle_insumo.monto_insumo }}</p></li>
+                        <li><p><strong>Cantidad del insumo: </strong>{{ detalle_insumo.cantidad_insumo }}</p></li>
+                        {% empty %}
+                            <li>No hay insumos registrados.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <h5 class="collapse-toggle btn btn-outline-danger btn-lg btn-block" data-toggle="collapse" data-target="#seccionCostos{{ mantenimiento.id }}">Costos</h5>
+                <div id="seccionCostos{{ mantenimiento.id }}" class="collapse">
+                    <ul>
+                        {% for detalle_mantencion in mantenimiento.detalles_mantencion.all %}
+                        <li><p><strong>Costo aplicado de la mantención: </strong>{{ detalle_mantencion.cost_aplic }}</p></li>
+                        <li><p><strong>Horas hombre invertidas: </strong>{{ detalle_mantencion.h_h_aplic }}</p></li>
+                        {% empty %}
+                            <li>No hay costos registrados.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </li>
+        {% empty %}
+        <br>
+        <li>No hay registros de mantenimiento.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Agrega la paginación -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if obtener.has_previous %}
+                <a href="?page={{ obtener.previous_page_number }}">&laquo; Anterior</a>
+            {% endif %}
+
+            <span class="current-page">
+                Página {{ obtener.number }} de {{ obtener.paginator.num_pages }}.
+            </span>
+
+            {% if obtener.has_next %}
+                <a href="?page={{ obtener.paginator.num_pages }}">Siguiente &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+</div>
+</div>
+</div>
+
+{% else %}
+  <script>
+    window.location.href="/"
+  </script>
+{% endif %}
+   
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "app_bomberos/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Eliminar Vehículos{% endblock %}
+
+
+{% block content %}
+{% if user.is_authenticated and user.is_superuser%}
+<div class="container" style="margin-top: 50px;">
+    <form class="form" action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="alert alert-danger" role="alert">
+        <h3>¿Seguro que deseas eliminar este vehículo?</h3>
+        <p class="pt-2"><strong>Código:</strong> {{v.clave}}</p>
+        <p><strong>Patente:</strong> {{v.patente}}</p>
+        <p><strong>Modelo:</strong> {{v.modelo}}</p>
+        <p><strong>Compañia:</strong> {{v.compañia}}</p>
+        <p><strong>Imagen:</strong> {{v.imagen}}</p>
+        <div class="pt-3">
+         <input type="submit" value="Eliminar" class="btn btn-danger btn-lg text-white">
+        </div>
+    
+        
+    </div>
+    <form action="">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                   
+
+                  
+                  
+                   
+       
+    </form>
+  </div>
+
+</div>
+ </div>
+ </div>
+
+
+  <div class="a">
+  </div>
+    <style>
+    .a{
+      margin-top: 200px;
+    }
+    </style>
+
+
+{% else %}
+    <script>
+      window.location.href="/"
+    </script>
+{% endif %}
+
+{% endblock content %}

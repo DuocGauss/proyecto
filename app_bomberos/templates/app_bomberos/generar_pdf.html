@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detalle de Mantenimiento Preventivo</title>
+    <style>
+        /* Estilos CSS para dar formato al PDF */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            text-align: center;
+        }
+        h3 {
+            font-size: 18px;
+            text-align: center;
+        }
+        /* Otros estilos CSS según tus necesidades */
+    </style>
+</head>
+
+<body>
+    <h1>Detalle de Mantenimiento</h1>
+    <!-- Muestra los detalles del registro específico -->
+    <h3>Información general:</h3>
+    <p><strong>Fecha de mantención:</strong> {{ registro.fecha_mant }}</p>
+    <p><strong>Fecha de ingreso:</strong> {{ registro.fecha_ingreso }}</p>
+    <p><strong>Fecha de entrega:</strong> {{ registro.fecha_entrega }}</p>
+    <p><strong>Kilometraje:</strong> {{ registro.kilometraje }}</p>
+    <p><strong>Tipo de mantención:</strong> {{ registro.tipo_mantencion }}</p>
+    <p><strong>Proveedor:</strong> {{ registro.id_prov }}</p>
+    <p><strong>Observaciones:</strong> {{ registro.observaciones }}</p>
+    <h3>Tareas:</h3>
+    <ul>
+        {% for tarea in tareas_internas %}
+          <p>{{ tarea.descripcion }} - {{ tarea.tipo_tarea }}</p>
+        {% empty %}
+          <p>No hay tareas registradas.</p>
+        {% endfor %}
+      </ul>
+
+      <h3>Insumos:</h3>
+      <ul>
+          {% for detalle in detalles_insumo %}
+            <p><strong>Nombre del insumo:</strong> {{ detalle.id_insumo }}</p>
+            <p><strong>Monto del insumo:</strong> {{ detalle.monto_insumo }}</p>
+            <p><strong>Cantidad del insumo:</strong> {{ detalle.cantidad_insumo }}</p>
+          {% empty %}
+            <p>No hay insumos registrados.</p>
+          {% endfor %}
+        </ul>
+
+        <h3>Costos internos:</h3>
+      <ul>
+          {% for detalle in detalles_mantencion %}
+            <p><strong>Costo aplicado:</strong> {{ detalle.cost_aplic }}</p>
+            <p><strong>Horas Hombres invertidas:</strong> {{ detalle.h_h_aplic }}</p>
+          {% empty %}
+            <p>No hay costos internos registrados.</p>
+          {% endfor %}
+        </ul>
+
+    <div class="container-fluid cew-9">
+        <div class="row">
+         <div class="col-6">
+            <h2>Firma del Capitán:</h2>
+            <br>
+            <p >(Nombre del Capitán)</p>
+            <br>
+         </div>
+         <div class="col-6">
+            <h2>Firma del Mecánico:</h2>
+            <br>
+            <p >(Nombre del Mecánico)</p>
+         </div>
+        </div>
+       </div>
+</body>
+
+</html>
+

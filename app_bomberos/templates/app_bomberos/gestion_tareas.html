@@ -1,0 +1,128 @@
+{% extends "app_bomberos/base.html" %}
+{% load static %}
+
+{% block title %}Gestión De Tareas{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+           title: 'Exito!',
+           text: '{{msg}}',
+           icon: 'success',
+           confirmButtonText: 'Aceptar',
+           confirmButtonColor: 'Green'
+           }) 
+       </script>
+    {% endfor %}
+</ul>
+{% endif %}
+<script>
+function eliminarTarea(id) {
+    Swal.fire({
+        title: 'Alerta',
+        text: 'Está a punto de eliminar una tarea',
+        icon: 'warning',
+        confirmButtonText: 'Continuar',
+        confirmButtonColor: 'Red',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar'
+    }).then(function(resp) {
+        if (resp.isConfirmed) {
+            // Realizar una solicitud AJAX al servidor para eliminar el registro
+            $.ajax({
+                url: "/delete_tarea/" + id,
+                method: "POST", // O "DELETE" si prefieres utilizar el método DELETE
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(data) {
+                    // Eliminar la fila de la tabla HTML
+                    $('#tarea-' + id).remove();
+                    // Mostrar un mensaje de éxito
+                    Swal.fire({
+                        title: 'Éxito',
+                        text: 'Tarea interna eliminada con éxito',
+                        icon: 'success',
+                        confirmButtonText: 'Aceptar',
+                        confirmButtonColor: 'Green'
+                    }).then(function() {
+                        // Redirigir a la página de gestión de tareas
+                        window.location.href = "{% url 'gestion_tareas' %}";
+                    });
+                },
+                error: function(data) {
+                    // Manejar errores si es necesario
+                    console.error('Error al eliminar la tarea interna');
+                }
+            });
+        }
+    });
+}
+</script>
+{% if user.is_authenticated and user_role == 'mecanico' and not user.is_superuser%}
+<div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <h1 style="text-align: center;">Gestión de tareas</h1>
+        <div class="table-responsive">
+          <form method="get" action="{% url 'gestion_tareas' %}" class="form-inline d-flex justify-content-center">
+            <input type="text" name="q" class="form-control" placeholder="Buscar Tareas">
+            <button type="submit" class="btn btn-danger">Buscar</button>
+        </form>
+          <table class="table table-hover">
+            <thead >
+              <tr>
+                <th>ID</th>
+                <th>Descripcion</th>
+                <th>Tipo de tarea</th>
+                <th>Eliminar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for v in obtener %}
+              <tr>
+                <td>{{ v.id_tarea }}</td>
+                <td>{{ v.descripcion }}</td>
+                <td>{{ v.tipo_tarea }}</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-lg text-white" onclick="eliminarTarea({{ v.id_tarea }})">🗑</button>
+                </td>                
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <br>
+
+        <!-- Agrega la paginación -->
+    <div class="pagination">
+      <span class="step-links">
+          {% if obtener.has_previous %}
+              <a href="?page={{ obtener.previous_page_number }}">&laquo; Anterior</a>
+          {% endif %}
+
+          <span class="current-page">
+              Página {{ obtener.number }} de {{ obtener.paginator.num_pages }}.
+          </span>
+
+          {% if obtener.has_next %}
+              <a href="?page={{ obtener.paginator.num_pages }}">Siguiente &raquo;</a>
+          {% endif %}
+      </span>
+  </div>
+
+      </div>
+    </div>
+  </div>
+
+{% else %}
+  <script>
+    window.location.href="/"
+  </script>
+{% endif %}
+
+{% endblock %}

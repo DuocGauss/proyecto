@@ -1,0 +1,64 @@
+{% extends 'app_bomberos/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+{% if messages %}
+
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+           title: 'Exito!',
+           text: '{{msg}}',
+           icon: 'success',
+           confirmButtonText: 'Aceptar',
+           confirmButtonColor: 'Green'
+           }) 
+       </script>
+    {% endfor %}
+</ul>
+{% endif %}
+
+
+  <!------>
+
+  <div class="cont1">
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            
+        </div>
+        <div class="col-sm-4">
+            <h1>Iniciar Sesión</h1>
+            <form action="" method="POST">
+                {% csrf_token %}
+                {{form|crispy}}
+                <input type="submit" class="btn btn-success btn-lg" value="Ingresar"><br>
+                <br><a href="{% url 'reset_password' %}">Se me olvidó la contraseña</a>
+            </form>
+            
+        </div>
+        <div class="col-sm-4">
+    </div>
+</div>
+</div>
+</div>
+
+<div class="a">
+</div>
+  <style>
+  .a{
+    margin-top: 300px;
+  }
+
+  .cont1{
+    text-align: center;
+    margin-top: 50px;
+    margin-left: 100px;
+    margin-right: 100px;
+    margin-bottom: -150px;
+  }
+  </style>
+
+{% endblock content %}

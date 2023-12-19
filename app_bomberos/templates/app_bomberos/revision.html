@@ -1,0 +1,112 @@
+{% extends "app_bomberos/base.html" %}
+
+{% block title %}Observaciones Diarias{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+           title: 'Exito!',
+           text: '{{msg}}',
+           icon: 'success',
+           confirmButtonText: 'Aceptar',
+           confirmButtonColor: 'Green'
+           }) 
+       </script>
+    {% endfor %}
+</ul>
+{% endif %}    
+{% if user.is_authenticated and not user.is_superuser%}
+    <div class="container-fluid">
+
+
+
+        <div class="row">
+            <div id="panel-cliente" class="col-sm-2">
+                <ul class="nav flex-column">
+                    <li>
+                        <h3 style="border-bottom: 1px solid #acacac;">Tipos de Mantenciones</h3>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "historial_mantenciones" %}">M. Preventivo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "historial_correctiva" %}">M. Correctivo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "historial_externo" %}">M. Externo</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "revision" %}">Revisiones Diarias</a>
+                    </li>
+                    {% if user_role == 'comandante' and not user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url "estadisticas" %}">Estadísticas</a>
+                    </li>
+                    {% endif %}
+                   
+                </ul>
+            </div>
+
+
+    <div class="col-md-10"> 
+        <h3>Observaciones Diarias</h3>
+        <br>
+            <form method="get" action="{% url 'revision' %}" class="form-inline d-flex justify-content-center">
+                <input type="text" name="q" class="form-control" placeholder="Buscar Revisiones">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+    <ul>
+        {% for mantenimiento in obtener %}
+        <li>
+            <button type="button" class="btn btn-link " data-toggle="collapse" data-target="#detalleMantencion{{ mantenimiento.id_rev_dia }}">
+                Observación del {{ mantenimiento.fecha }} Para carro clave: {{ mantenimiento.id_autobombero.clave }} Patente: {{ mantenimiento.id_autobombero.patente }} Compañia: {{ mantenimiento.id_autobombero.compania }}
+            </button>           
+            <div id="detalleMantencion{{ mantenimiento.id_rev_dia }}" class="collapse">
+                <p><strong>Fecha de observación:</strong> {{ mantenimiento.fecha }}</p>
+                <p><strong>Hora de salida:</strong> {{ mantenimiento.hora_salida }}</p>
+                <p><strong>Hora de llegada:</strong> {{ mantenimiento.hora_llegada }}</p>
+                <p><strong>Kilómetro de entrada:</strong> {{ mantenimiento.km_entrada }}</p>
+                <p><strong>Hora motor:</strong> {{ mantenimiento.hora_motor }}</p>
+                <p><strong>Hora bomba:</strong> {{ mantenimiento.hora_bomba }}</p>
+                <p><strong>Estado del carro:</strong> {{ mantenimiento.est_carro}}</p>
+                <p><strong>Observaciones:</strong> {{ mantenimiento.observaciones }}</p>
+            </div>
+        </li>
+        {% empty %}
+        <br>
+        <li>No hay registros de revisiones diarias.</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Agrega la paginación -->
+    <div class="pagination">
+        <span class="step-links">
+            {% if obtener.has_previous %}
+                <a href="?page={{ obtener.previous_page_number }}">&laquo; Anterior</a>
+            {% endif %}
+
+            <span class="current-page">
+                Página {{ obtener.number }} de {{ obtener.paginator.num_pages }}.
+            </span>
+
+            {% if obtener.has_next %}
+                <a href="?page={{ obtener.paginator.num_pages }}">Siguiente &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+</div>
+</div>
+</div>
+
+{% else %}
+  <script>
+    window.location.href="/"
+  </script>
+{% endif %}
+   
+{% endblock %}

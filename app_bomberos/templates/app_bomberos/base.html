@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Popper.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- DateRangePicker -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <title>{% block title %}Sitio Web{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'app_bomberos/css/style1.css' %}">
+
+</head>
+<body>
+    <header>
+        
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <a class="navbar-brand" href="{% url 'index' %}"><h1>Fire<strong>Track</strong><i class="fas fa-solid  fa-fire"></i></h1></a>
+            <!-- Botón para pantallas pequeñas -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            <!-- Menú de Navegación -->
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo03">
+                <ul class="navbar-nav mr-auto">
+                    <!-- ... (Otras opciones de menú) ... -->
+                </ul>
+                
+                {% if user.is_authenticated %}
+                    <ul class="navbar-nav ml-auto">
+                        {% if user.is_staff %}
+                            <!-- Botón Administración con elementos desplegables -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Administración
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: rgb(178, 29, 29);">
+                                    <a class="dropdown-item c" href="{% url 'gestion_vehiculos' %}">Gestión Vehiculos</a>
+                                    <a class="dropdown-item c" href="{% url 'compañia' %}">Agregar Compañías</a>
+                                    <a class="dropdown-item c" href="{% url 'register_m' %}">Registrar usuario</a>
+                                </div>
+                            </li>
+                        {% endif %}
+                        <!-- Botón Mantenciones con elementos desplegables -->
+                        {% if not user.is_superuser %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="mantencionesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Mantenciones
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="mantencionesDropdown" style="background-color: rgb(178, 29, 29);">
+                                    <a class="dropdown-item c" href="{% url 'historial_mantenciones'%}">Historial de mantenciones</a>
+                                    <a class="dropdown-item c" href="{% url 'revision' %}">Revisiones Diarias</a>
+                                </div>
+                            </li>
+                        {% endif %}
+                        <!-- Elementos de menú a la derecha -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'perfil_usuario' %}">Perfil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" onclick="confirmLogout()">Cerrar Sesión</a>
+                        </li>
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login_custom' %}">Iniciar sesión</a>
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>        
+    </header>
+    <main class="contenido-principal">
+        <div id="content-wrap">
+        {% block content %}
+        
+        {% endblock %}
+    </main>
+
+
+
+        <!-- Pie de página común -->
+         <!-- Footer -->
+        </div>
+      <footer>
+          <p>Bomberos de Chile</p>
+          <p><a href="/">gu.martinezb@duocuc.cl</a></p>
+      </footer>
+    </div>
+ <!-- JavaScript para la confirmación de cierre de sesión -->
+ <script>
+    function confirmLogout() {
+        Swal.fire({
+            title: '¿Cerrar Sesión?',
+            text: '¿Estás seguro de que deseas cerrar sesión?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Sí',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: 'Red'
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                window.location.href = "{% url 'logout_custom' %}";
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,98 @@
+{% extends 'app_bomberos/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Mantención{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+           title: 'Exito!',
+           text: '{{msg}}',
+           icon: 'success',
+           confirmButtonText: 'Aceptar',
+           confirmButtonColor: 'Green'
+           }) 
+       </script>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if user.is_authenticated and user_role == 'mecanico' and not user.is_superuser%}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4">
+            <img class="img-thumbnail img-fluid" src="{{ v.imagen.url }}" alt="Vehículo">
+            <h2>{{ v.modelo }}</h2>
+            <!-- Otros detalles del vehículo -->
+            <p><strong>Clave:</strong> {{ v.clave }}</p>
+            <p><strong>Patente:</strong> {{ v.patente }}</p>
+            <p><strong>Tipo de vehículo:</strong> {{ v.tipo_vehiculo }}</p>
+            <p><strong>Marca:</strong> {{ v.marca }}</p>
+            <p><strong>Año:</strong> {{ v.año }}</p>
+            <p><strong>N° Motor:</strong> {{ v.nro_motor }}</p>
+            <p><strong>N° Chasis:</strong> {{ v.nro_chasis }}</p>
+            <p><strong>Compañia:</strong> {{ v.compañia }}</p>
+
+            <!-- Default dropright button -->
+            <div class="btn-group dropright">
+                <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Proveedor
+                </button>
+                <div class="dropdown-menu">
+                <!-- Dropdown menu links -->
+                <a role="button" class="dropdown-item" href="{% url 'proveedor' v.id %}">Agregar Proveedor</a>
+                <a class="dropdown-item" href="{% url 'gestion_proveedor' %}">Eliminar Proveedor</a>
+                </div>
+            </div>
+            <p></p>
+            <!-- Default dropright button -->
+            <div class="btn-group dropright">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Tareas
+                </button>
+                <div class="dropdown-menu">
+                <!-- Dropdown menu links -->
+                <a role="button" class="dropdown-item" href="{% url 'tarea_interna' v.id %}">Agregar Tareas</a>
+                <a class="dropdown-item" href="{% url 'gestion_tareas' %}">Eliminar Tareas</a>
+                </div>
+            </div>
+        </div>   
+        
+<div class="col-sm-6">
+    <!-- Formulario de Mantenimiento -->
+    <h3>Registrar Mantenimiento</h3>
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form_mantencion.tipo_mantencion|as_crispy_field }}
+        {{ form_mantencion.fecha_mant|as_crispy_field }}
+        {{ form_mantencion.kilometraje|as_crispy_field }}
+        {{ form_mantencion.fecha_ingreso|as_crispy_field }}
+        {{ form_mantencion.fecha_entrega|as_crispy_field }}
+        {{ form_mantencion.observaciones|as_crispy_field }}
+        {{ form_mantencion.sueldo_a_m|as_crispy_field }}
+        {{ form_mantencion.id_prov|as_crispy_field }}
+        {{ form_mantencion.tareas_internas|as_crispy_field }}
+        
+        <button type="submit" class="btn btn-success">Guardar Mantenimiento</button>
+    </form>
+    <br> 
+       
+</div>
+</div>
+</div>
+
+{% else %}
+  <script>
+    window.location.href="/"
+  </script>
+{% endif %}
+
+
+
+
+{% endblock content %}

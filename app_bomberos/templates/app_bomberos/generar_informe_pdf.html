@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Agrega estilos CSS aquí */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            text-align: center;
+        }
+        h3 {
+            font-size: 18px;
+            text-align: center;
+        }
+        /* Define más estilos según tus necesidades */
+    </style>
+</head>
+<body>
+    <p><strong>Fecha de inicio y fin</strong> {{ fecha_inicio }} - {{ fecha_fin }}</p>
+    <h2>Informe del valor gastado total en las mantenciones más las horas invertidas</h2>
+    <p><strong>Total horas invertidas mantención preventiva:</strong> {{ horas_invertidas_preventivos }}</p>
+    <p><strong>Total horas invertidas mantención correctiva:</strong> {{ horas_invertidas_correctivos }}</p>
+    <p><strong>Dinero total gastado para mantenciones preventivas:</strong> {{ valor_gastado_preventivos }}</p>
+    <p><strong>Dinero total gastado para mantenciones correctivas:</strong> {{ valor_gastado_correctivos }}</p>
+    <p><strong>Dinero total gastado para mantenciones externas:</strong> {{ valor_gastado_externos }}</p>
+    <p><strong>Horas invertidas totales:</strong> {{ horas_invertidas_total }}</p>
+    <p><strong>Dinero total gastado:</strong> {{ valor_gastado_total }}</p>
+    <!-- Puedes agregar más contenido y estilos aquí -->
+    <img src="data:image/png;base64, {{ chart_image }}" alt="Gráfico de estadísticas">
+</body>
+</html>
+

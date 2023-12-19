@@ -1,0 +1,87 @@
+{% extends "app_bomberos/base.html" %}
+{% load static %}
+
+{% block title %}Perfil del Usuario{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+           title: 'Exito!',
+           text: '{{msg}}',
+           icon: 'success',
+           confirmButtonText: 'Aceptar',
+           confirmButtonColor: 'Green'
+           }) 
+       </script>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 mx-auto py-4">
+            <div class="card">
+                <div class="card-header">
+                    <h1>Datos personales</h1>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                          <tr>
+                              <th style="color:white;">ID</th>
+                              <td style="color:white;">{{data.id}}</td>
+                          </tr>
+                            <tr>
+                                <th >Nombre de usuario</th>
+                                <td >{{data.username}}</td>
+                            </tr>
+                            <tr>
+                                <th >Nombre completo</th>
+                                <td >{{data.first_name}} {{data.last_name}}</td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <td>{{data.email}}</td>
+                            </tr>
+                            <tr>
+                              <th>Cargo</th>
+                              <td>{{data.role}}</td>
+                          </tr> 
+                            <tr>
+                                <th>Compañia</th>
+                                <td>{{data.compania}}</td>
+                            </tr>
+                            {% if user_role == 'mecanico' %} 
+                            <tr>
+                                <th>Sueldo</th>
+                                <td>{{data.sueldo}}</td>
+                            </tr>
+                            <tr>
+                                <th>Valor por hora</th>
+                                <td>{{data.valor_por_hora}}</td>
+                            </tr>
+                            {% endif %} 
+                            <tr>
+                                <th>Admin</th>
+                                <td>{{data.admin}}</td>
+                            </tr>  
+                        </tbody>
+                    </table>
+                    <a role="button" class="btn btn-warning btn-lg" href="{% url 'password_change' %}">Cambiar Contraseña</a>
+                    <a role="button" class="btn btn-success btn-lg" href="{% url 'moduser' data.id %}">Modificar datos personales</a>
+                  </div> 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+

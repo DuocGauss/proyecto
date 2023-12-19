@@ -1,0 +1,110 @@
+{% extends "app_bomberos/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Estadísticas{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated and user_role == 'comandante' and not user.is_superuser%}
+<div class="container-fluid">
+
+
+
+    <div class="row">
+        <div id="panel-cliente" class="col-sm-2">
+            <ul class="nav flex-column">
+                <li>
+                    <h3 style="border-bottom: 1px solid #acacac;">Tipos de Mantenciones</h3>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "historial_mantenciones" %}">M. Preventivo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "historial_correctiva" %}">M. Correctivo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "historial_externo" %}">M. Externo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "revision" %}">Revisiones Diarias</a>
+                </li>
+                {% if user_role == 'comandante' and not user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url "estadisticas" %}">Estadísticas</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+
+
+<div class="col-md-10"> 
+    <h1>Generar informes</h1>
+    <br>
+    <h5>Especificar rango de fechas para generar informes anuales, mensuales, etc</h5>
+    <form method="post" action="{% url 'estadisticas' %}">
+        {% csrf_token %}
+        <input type="text" id="fechaRange" name="fechaRange">
+        <button class='btn btn-success' type="submit">Generar Gráfico</button>
+        <p></p>
+        <input class='btn btn-danger' type="submit" name="generate_pdf" value="Generar PDF">
+    </form>
+    <img src="data:image/png;base64, {{ chart_image }}" alt="">
+  </div>
+</div>
+</div>
+</div>
+
+
+
+
+<script>
+    $(function() {
+        $('#fechaRange').daterangepicker({
+            opens: 'left',
+            locale: {
+                format: 'YYYY-MM-DD' // Configura el formato de fecha
+            }
+        }, function(start, end, label) {
+            var fechaInicio = start.format('YYYY-MM-DD');
+            var fechaFin = end.format('YYYY-MM-DD');
+            console.log("A new date selection was made: " + fechaInicio + ' to ' + fechaFin);
+        });
+    });
+
+    function generarGrafico(fechaInicio, fechaFin) {
+        // Realiza una solicitud AJAX para obtener la imagen del gráfico
+        $.ajax({
+            url: '{% url "estadisticas" %}', // Reemplaza con la URL adecuada
+            type: 'POST',
+            data: {
+                fechaInicio: fechaInicio,
+                fechaFin: fechaFin
+            },
+            success: function(data) {
+                // Cambia la fuente de la imagen y la muestra
+                $('#chart-image').attr('src', data);
+                $('#chart-image').show();
+            }
+        });
+    }
+ 
+  
+
+    function generarInformePDF(fechaInicio, fechaFin) {
+        // Crear una URL para la generación del informe con los parámetros necesarios
+        var url = '{% url "generar_informe_pdf" %}?fecha_inicio=' + fechaInicio + '&fecha_fin=' + fechaFin;
+
+        // Redirigir al usuario a la vista de generación de informe PDF
+        window.location.href = url;
+    }
+      
+    </script>
+
+{% else %}
+    <script>
+        window.location.href="/"
+    </script>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "app_bomberos/base.html" %}
+{% load static %}
+
+{% block title %}Gestión De Vehículos{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+
+    {% for msg in messages %}
+       <script>
+           Swal.fire({
+           title: 'Exito!',
+           text: '{{msg}}',
+           icon: 'success',
+           confirmButtonText: 'Aceptar',
+           confirmButtonColor: 'Green'
+           }) 
+       </script>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<script>
+  function AlertaEliminar(id)
+  {
+    Swal.fire({
+    title: 'Alerta',
+    text: 'Esta apunto de eliminar un vehículo',
+    icon: 'warning',
+    confirmButtonText: 'Continuar',
+    confirmButtonColor: 'Red',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar'
+    }).then(function(resp){
+      if(resp.isConfirmed)
+      {
+          window.location.href="/delete_vehiculo/" + id
+      }
+    });
+  }
+  
+</script>
+{% if user.is_authenticated and user.is_superuser%}
+<div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10">
+        <h1 style="text-align: center;">Gestión de carros</h1>
+            <form method="get" action="{% url 'gestion_vehiculos' %}" class="form-inline d-flex justify-content-center">
+                <input type="text" name="q" class="form-control" placeholder="Buscar Mantenciones">
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </form>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th>Clave</th>
+                <th>Patente</th>
+                <th>Tipo de vehículo</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Año</th>
+                <th>N° Motor</th>
+                <th>N° Chasis</th>
+                <th>Compañia</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for v in obtener %}
+              <tr>
+                <td>{{ v.clave }}</td>
+                <td>{{ v.patente }}</td>
+                <td>{{ v.tipo_vehiculo }}</td>
+                <td>{{ v.marca }}</td>
+                <td>{{ v.modelo }}</td>
+                <td>{{ v.año }}</td>
+                <td>{{ v.nro_motor }}</td>
+                <td>{{ v.nro_chasis }}</td>
+                <td>{{ v.compania }}</td>
+                <td>
+                  <a role="button" class="btn btn-warning btn-lg" href="{% url 'update_vehiculo' v.id %}">📋</a>
+                  <a role="button" class="btn btn-danger btn-lg text-white" onclick="AlertaEliminar({{v.id}})">🗑</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <br>
+        <div style="text-align: center;">
+          <a role="button" class="btn btn-success btn-lg" href="{% url 'add_vehiculo' %}">Agregar Vehículo</a>
+        </div>
+        <br>
+
+        <!-- Agrega la paginación -->
+    <div class="pagination">
+      <span class="step-links">
+          {% if obtener.has_previous %}
+              <a href="?page={{ obtener.previous_page_number }}">&laquo; Anterior</a>
+          {% endif %}
+
+          <span class="current-page">
+              Página {{ obtener.number }} de {{ obtener.paginator.num_pages }}.
+          </span>
+
+          {% if obtener.has_next %}
+              <a href="?page={{ obtener.paginator.num_pages }}">Siguiente &raquo;</a>
+          {% endif %}
+      </span>
+  </div>
+
+      </div>
+    </div>
+  </div>
+{% else %}
+  <script>
+    window.location.href="/"
+  </script>
+{% endif %}
+{% endblock %}
